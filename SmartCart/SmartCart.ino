@@ -10,6 +10,8 @@ const byte IN4 = 2;
 
 const byte PWMPins[] = {ENA, ENB};
 const byte dirPins[] = {IN1, IN2, IN3, IN4};
+const byte dirPinsA[] = {IN1, IN2};
+const byte dirPinsB[] = {IN3, IN4};
 
 template <class T, size_t N> constexpr size_t len(const T(&)[N]) { return N; }
 
@@ -27,24 +29,21 @@ void setup() {
 int R = 1, L = -1;
 
 void loop() {
-  drive(200, 0);
+  drive(200, 200);
   delay(5000);
-  drive(-200, 0);
+  drive(-200, -200);
   delay(5000);
 }
 
-void drive(int mspeed, int mdif){
-  for (byte pin : PWMPins) analogWrite(pin, abs(mspeed));
-  for (int i = 0; i<len(dirPins); i++) digitalWrite(dirPins[i], mspeed>0 ? !(i%2):i%2);
+void drive(int mspeedA, int mspeedB){
+  //for (byte pin : PWMPins) analogWrite(pin, abs(mspeed));
+  analogWrite(ENA, abs(mspeedA));
+  analogWrite(ENB, abs(mspeedB));
+  //for (int i = 0; i<len(dirPins); i++) digitalWrite(dirPins[i], mspeed>0 ? !(i%2):i%2);
+  for (int i = 0; i<len(dirPinsA); i++) digitalWrite(dirPinsA[i], mspeedA>0 ? !(i%2):i%2);
+  for (int i = 0; i<len(dirPinsB); i++) digitalWrite(dirPinsB[i], mspeedB>0 ? !(i%2):i%2);
 }
 
-void turn(){
-  
-}
-
-void turnstill(){
-  
-}
 
 void stopMoving(){
   for (byte pin : dirPins) digitalWrite(pin, LOW);

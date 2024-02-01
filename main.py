@@ -1,5 +1,6 @@
 import cv2
 from ultralytics import YOLO
+import supervision as sv
 
 # Load the YOLOv8 model
 model = YOLO('yolov8n.pt')
@@ -15,9 +16,30 @@ while cap.isOpened():
     if success:
         # Run YOLOv8 inference on the frame
         results = model(frame)
+        detections = sv.Detections.from_ultralytics(results[0])
+        detections = detections[detections.class_id == 0]
+
+        detection = detections[0]
+        ydim, xdim = frame.shape[:2]
+
+        boxleft = detection.xyxy[0][0]
+        boxright = detection.xyxy[0][2]
+        boxcenter = (boxleft + boxright) / 2
+
+        if boxcenter < xdim / 2:
+            print("go left")
+        elif boxcenter > xdim / 2:
+            print("go right")
+
+        box_annotator = sv.BoxAnnotator()
+        annotated_frame = box_annotator.annotate(
+            scene=frame.copy(),
+            detections=detections,
+            labels=["person"]*len(detections.class_id)
+        )
+                
 
         # Visualize the results on the frame
-        annotated_frame = results[0].plot()
 
         # Display the annotated frame
         cv2.imshow("YOLOv8 Inference", annotated_frame)

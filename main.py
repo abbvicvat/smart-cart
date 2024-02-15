@@ -35,10 +35,42 @@ while cap.isOpened():
         results = model(frame)
         detections = sv.Detections.from_ultralytics(results[0]) # Detections class is not very nice to work with
         detections = detections[detections.class_id == 0]
-
         labels = ["person"] * len(detections.class_id)
+
+        
         if len(detections) > 0:
-            detection = detections[0]
+            predictedxyxy = []
+            for i in range(4):
+                f = kalmanfilters[i]
+                f.predict()
+                predictedxyxy.append(f.x[0])
+            
+            best_index = None
+            best_overlap_rate = -1
+            for i, detection in enumerate(detections):
+                print(i, detection)
+                overlapxyxy = [None] * 4
+                xyxy = detection[0]
+                print(xyxy)
+
+                for j in range(4):
+                    if j < 2:
+                        func = max
+                    else:
+                        func = min
+                    overlapxyxy[j] = func(predictedxyxy[j], xyxy[j])
+                
+                calc_box_area = lambda box : max(0, box[2] - box[0]) * max(0, box[3] - box[1])
+                overlap_area = calc_box_area(overlapxyxy)
+                total_area = calc_box_area(predictedxyxy) + calc_box_area(xyxy) - overlap_area
+                overlap_rate = overlap_area / total_area
+
+                if overlap_rate > best_overlap_rate:
+                    best_overlap_rate = overlap_rate
+                    best_index = i
+
+            print(best_index, best_overlap_rate)
+            detection = detections[best_index]
             ydim, xdim = frame.shape[:2]
 
             xyxy = detection.xyxy[0]
@@ -46,11 +78,8 @@ while cap.isOpened():
             boxright = detection.xyxy[0][2]
             boxcenter = (boxleft + boxright) / 2
 
-            predictedxyxy = []
             for i in range(4):
                 f = kalmanfilters[i]
-                f.predict()
-                predictedxyxy.append(f.x[0])
                 f.update(xyxy[i])
             
             predictedxyxy = np.array(predictedxyxy)
@@ -63,7 +92,7 @@ while cap.isOpened():
             elif boxcenter > xdim / 2:
                 print("go right")
 
-        print(detections)
+        #print(detections)
         box_annotator = sv.BoxAnnotator()
         annotated_frame = box_annotator.annotate(
             scene=frame.copy(),

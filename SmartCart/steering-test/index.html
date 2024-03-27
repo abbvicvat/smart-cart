@@ -1,32 +1,131 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" href="Style.css">
-        <title>
-            I Hetaste Laget
-        </title>
-        <link rel="icon" href="https://library.kissclipart.com/20180831/lzq/kissclipart-temperature-png-icon-clipart-temperature-clip-art-19eda9a74a33e702.png">
-    </head>
-    <body>
-        <div id="bla">
-            <p>Left Speed</p>
+<head>
+    <title>Steering</title>
+    <link rel="icon" href="https://library.kissclipart.com/20180831/lzq/kissclipart-temperature-png-icon-clipart-temperature-clip-art-19eda9a74a33e702.png">
+    <link rel="stylesheet" href="Style.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222; /* Dark background color for dark mode */
+            color: #fff; /* Text color for dark mode */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            font-weight: 600;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-align: center; /* Center the Adjust speed text */
+        }
+        .control-container {
+            display: flex;
+            align-items: center;
+            margin: 10px;
+        }
+        .control-container .control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px; /* Add margin between the buttons */
+        }
+        .label {
+            margin: 10px 0; /* Add margin above and below the labels */
+            font-size: 24px;
+            text-align: center; /* Center the label text */
+        }
+        input[type="number"] {
+            width: 400px;
+            height: 160px;
+            font-size: 48px;
+            text-align: center;
+            border-radius: 40px;
+            border: 4px solid #444;
+            background-color: #333;
+            color: #fff;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23fff'%3E%3Cpath d='M10 3l-7 10h14l-7-10z' /%3E%3C/svg%3E");
+            background-size: 32px;
+            background-repeat: no-repeat;
+            background-position: right center;
+            padding-right: 40px;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #66f;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    // Function to set both speeds to 200
+    function setForwardSpeed() {
+        document.getElementById("left").value = 200;
+        document.getElementById("right").value = 200;
+    }
+
+    // Function to set both speeds to -200
+    function setBackwardSpeed() {
+        document.getElementById("left").value = -200;
+        document.getElementById("right").value = -200;
+    }
+
+    function left() {
+        document.getElementById("left").value = 250;
+        document.getElementById("right").value = -250;
+    }
+
+    function right() {
+        document.getElementById("left").value = -250;
+        document.getElementById("right").value = 250;
+    }
+
+    // Function to set both speeds to 0
+    function stop() {
+        document.getElementById("left").value = 0;
+        document.getElementById("right").value = 0;
+    }
+
+    // Event listeners for forward, backward, and stop buttons
+    document.getElementById("forwardButton").addEventListener("click", setForwardSpeed);
+    document.getElementById("backwardButton").addEventListener("click", setBackwardSpeed);
+    document.getElementById("leftButton").addEventListener("click", left);
+    document.getElementById("rightButton").addEventListener("click", right);
+    document.getElementById("stopButton").addEventListener("click", stop);
+});
+    </script>
+    <h1>Adjust speed:</h1>
+    <div class="control-container">
+        <div class="control">
+            <p class="label">Left</p>
             <input id="left" type="number" value="0">
         </div>
-        <div>
-            <p>Right Speed</p>
+        <div class="control">
+            <p class="label">Right</p>
             <input id="right" type="number" value="0">
         </div>
-    </body>
+    </div>
+    <!-- Add forward, backward, and stop buttons -->
+    <div class="control-container">
+        <button id="forwardButton" class="control">Forward</button>
+        <button id="backwardButton" class="control">Backward</button>
+        <button id="stopButton" class="control">Stop</button>
+        <button id="rightButton" class="control">Right</button>
+        <button id="leftButton" class="control">Left</button>
+    </div>
 
-    <script type="module" src="index.js"> </script>
+    <script type="module" src="index.js"></script>
+</body>
 </html>
-
-<style>
-    body {
-        display: flex;
-        flex-direction: row;
-    }
-    #bla {
-        margin-right: 20px;
-    }
-</style>

@@ -3,7 +3,6 @@
 <head>
     <title>Steering</title>
     <link rel="icon" href="https://library.kissclipart.com/20180831/lzq/kissclipart-temperature-png-icon-clipart-temperature-clip-art-19eda9a74a33e702.png">
-    <link rel="stylesheet" href="Style.css">
     <style>
         body {
             display: flex;
@@ -11,8 +10,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #222; /* Dark background color for dark mode */
-            color: #fff; /* Text color for dark mode */
+            background-color: #0c0c0c; /* Dark background color for dark mode */
+            color: #e0e0e0; /* Text color for dark mode */
             font-family: Arial, sans-serif;
             margin: 0;
             font-weight: 600;
@@ -65,6 +64,21 @@
             outline: none;
             border-color: #66f;
         }
+        .direction-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .control-container .control:nth-child(1) {
+            margin-bottom: 10px;
+        }
+        .control-container .control:nth-child(2) {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .control-container .control:nth-child(3) {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -74,28 +88,43 @@
     function setForwardSpeed() {
         document.getElementById("left").value = 200;
         document.getElementById("right").value = 200;
+        // Trigger change event manually
+        document.getElementById("left").dispatchEvent(new Event("change"));
+        document.getElementById("right").dispatchEvent(new Event("change"));
     }
 
     // Function to set both speeds to -200
     function setBackwardSpeed() {
         document.getElementById("left").value = -200;
         document.getElementById("right").value = -200;
+        // Trigger change event manually
+        document.getElementById("left").dispatchEvent(new Event("change"));
+        document.getElementById("right").dispatchEvent(new Event("change"));
     }
 
     function left() {
         document.getElementById("left").value = 250;
         document.getElementById("right").value = -250;
+        // Trigger change event manually
+        document.getElementById("left").dispatchEvent(new Event("change"));
+        document.getElementById("right").dispatchEvent(new Event("change"));
     }
 
     function right() {
         document.getElementById("left").value = -250;
         document.getElementById("right").value = 250;
+        // Trigger change event manually
+        document.getElementById("left").dispatchEvent(new Event("change"));
+        document.getElementById("right").dispatchEvent(new Event("change"));
     }
 
     // Function to set both speeds to 0
     function stop() {
         document.getElementById("left").value = 0;
         document.getElementById("right").value = 0;
+        // Trigger change event manually
+        document.getElementById("left").dispatchEvent(new Event("change"));
+        document.getElementById("right").dispatchEvent(new Event("change"));
     }
 
     // Event listeners for forward, backward, and stop buttons
@@ -105,6 +134,7 @@
     document.getElementById("rightButton").addEventListener("click", right);
     document.getElementById("stopButton").addEventListener("click", stop);
 });
+
     </script>
     <h1>Adjust speed:</h1>
     <div class="control-container">
@@ -118,12 +148,14 @@
         </div>
     </div>
     <!-- Add forward, backward, and stop buttons -->
-    <div class="control-container">
+    <div class="control-container direction-buttons">
         <button id="forwardButton" class="control">Forward</button>
+        <div class="control-container">
+            <button id="leftButton" class="control">Left</button>
+            <button id="stopButton" class="control">Stop</button>
+            <button id="rightButton" class="control">Right</button>
+        </div>
         <button id="backwardButton" class="control">Backward</button>
-        <button id="stopButton" class="control">Stop</button>
-        <button id="rightButton" class="control">Right</button>
-        <button id="leftButton" class="control">Left</button>
     </div>
 
     <script type="module" src="index.js"></script>

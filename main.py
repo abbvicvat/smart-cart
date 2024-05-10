@@ -33,7 +33,7 @@ for i in range(4):
     f.Q = Q_discrete_white_noise(dim=2, dt=0.1, var=0.13)
     kalmanfilters.append(f)
 
-cap = cv2.VideoCapture('0')
+cap = cv2.VideoCapture(0)
 
 # Loop through the video frames
 start_find = True

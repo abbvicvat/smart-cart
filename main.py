@@ -33,27 +33,34 @@ for i in range(4):
     f.Q = Q_discrete_white_noise(dim=2, dt=0.1, var=0.13)
     kalmanfilters.append(f)
 
-cap = cv2.VideoCapture(0)
-
+url = "http://192.168.1.228:4747"
+cap = cv2.VideoCapture(f"{url}/mjpegfeed?640x480") # 4 3 ratio
 # Loop through the video frames
 start_find = True
 is_finding = False
 time_start = -1
 
-prevFrame = 0
 
 bla = time.time()
+
+delay = 30
+prevFrame = time.time()
+last_xyxy = 0
+
+numframes = 0
+TIME = time.time()
+
 while cap.isOpened():
+    if numframes == 0:
+        TIME = time.time()
     # Read a frame from the video
     success, frame = cap.read()
-    print("bla", round(time.time() - bla, 2))
+    #print("bla", round(time.time() - bla, 2))
     bla = time.time()
 
-    if time.time() - prevFrame < 0.2:
-        continue
-
     if success:
-        prevFrame = time.time()
+        if time.time() - prevFrame < delay / 1000:
+            continue
 
         # Run YOLOv8 inference on the frame
         ydim, xdim = frame.shape[:2]
@@ -68,8 +75,6 @@ while cap.isOpened():
                 start_find = False
                 time_start = time.time()
         
-        
-
         labels = ["person"] * len(detections.class_id)
 
         if len(detections) > 0:
@@ -139,15 +144,18 @@ while cap.isOpened():
             detections.class_id = np.append(detections.class_id, 1)
             labels.append("kalman")
 
-            if boxcenter < xdim / 2 - 50:
-                leftref.set(-255)
+            if boxcenter < xdim / 2 - 30:
+                leftref.set(-100)
                 rightref.set(255)
-            elif boxcenter > xdim / 2 + 50:
+                print("LEFT")
+            elif boxcenter > xdim / 2 + 30:
                 leftref.set(255)
-                rightref.set(-255)
+                rightref.set(-100)
+                print("RIGHT")
             else:
-                leftref.set(0)
-                rightref.set(0)
+                leftref.set(170)
+                rightref.set(170)
+                print("AHEAD")
                 
 
         #print(detections)
@@ -166,6 +174,9 @@ while cap.isOpened():
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
+        prevFrame = time.time()
+        numframes += 1
+        print(f"FPS = {numframes / (time.time() - TIME)}")
     else:
         # Break the loop if the end of the video is reached
         break
